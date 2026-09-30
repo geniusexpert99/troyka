@@ -6,7 +6,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
   const SIZE = 8;
-  const KINDS = 6;
+  const KINDS = 7;
   const kind = tile => tile === null ? null : typeof tile === 'object' ? tile.kind : tile;
   function adjacent(a, b) {
     return Number.isInteger(a) && Number.isInteger(b) && a >= 0 && b >= 0 && a < 64 && b < 64 &&

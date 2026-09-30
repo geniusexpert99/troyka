@@ -27,11 +27,12 @@
   const recordNoteElement = document.getElementById('record-note');
   const newButton = document.getElementById('new-game');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const names = ['Розовый ромб', 'Зелёный квадрат', 'Синий треугольник', 'Жёлтый шестиугольник', 'Фиолетовый кристалл', 'Оранжевый круг'];
+  const names = ['Розовый ромб', 'Зелёный квадрат', 'Синий треугольник', 'Жёлтый шестиугольник', 'Фиолетовый кристалл', 'Оранжевый круг', 'Красный круглый рубин'];
   const palettes = [
     ['#f45b9e','#ffb4d1','#d12f77'], ['#43d69d','#a7f5cd','#149b72'],
     ['#58baff','#bee7ff','#2d79d4'], ['#f6cf5c','#fff0ac','#cf942b'],
-    ['#aa87f4','#e1cbff','#7450c4'], ['#fb9660','#ffdab2','#d15a33']
+    ['#aa87f4','#e1cbff','#7450c4'], ['#fb9660','#ffdab2','#d15a33'],
+    ['#ed4656','#ffb5bb','#a91d35']
   ];
   const formatter = new Intl.NumberFormat('ru-RU');
   const stages = [
@@ -362,7 +363,7 @@
         node = recycledNodes.pop() || document.createElement('button');
         node.className = 'tile'; node.type = 'button';
         node.classList.remove('selected', 'clearing', 'swapping', 'reversing');
-        node.innerHTML = `<span class="gem" style="background-position:${tile.kind * 20}% 0" aria-hidden="true"></span>`;
+        node.innerHTML = `<span class="gem" style="background-position:${tile.kind * 100 / (KINDS - 1)}% 0" aria-hidden="true"></span>`;
         node.dataset.kind = String(tile.kind);
         node.style.opacity = ''; node.tabIndex = -1;
         node.setAttribute('aria-pressed', 'false');
@@ -543,7 +544,7 @@
     const lifecycle = new AbortController();
     const state = () => ({ board: board.map(tile => tile.kind), size: SIZE, score, bestScore, busy, stage: stageIndex + 1, soundEnabled, screen: activeScreen.id });
     const definitions = [
-      { name: 'read_game', description: 'Read the current 8×8 board (row-major gem kinds 0–5), score and busy state.', annotations: { readOnlyHint: true, untrustedContentHint: false }, inputSchema: { type: 'object', properties: {}, additionalProperties: false }, execute: state },
+      { name: 'read_game', description: 'Read the current 8×8 board (row-major gem kinds 0–6), score and busy state.', annotations: { readOnlyHint: true, untrustedContentHint: false }, inputSchema: { type: 'object', properties: {}, additionalProperties: false }, execute: state },
       { name: 'start_new_game', description: 'Start a fresh game immediately, replacing the board and resetting the score.', annotations: { readOnlyHint: false, untrustedContentHint: false }, inputSchema: { type: 'object', properties: {}, additionalProperties: false }, execute() { newGame(); return state(); } },
       { name: 'swap_gems', description: 'Swap two adjacent gems at row-major indices 0–63, and wait for rollback or all cascades to finish.', annotations: { readOnlyHint: false, untrustedContentHint: false }, inputSchema: { type: 'object', properties: { first: { type: 'integer', minimum: 0, maximum: 63 }, second: { type: 'integer', minimum: 0, maximum: 63 } }, required: ['first', 'second'], additionalProperties: false }, execute(input) { if (!input || !adjacent(input.first, input.second)) throw new Error('Выберите два соседних самоцвета с индексами 0–63'); if (busy) throw new Error('Дождитесь завершения текущего хода'); return attemptSwap(input.first, input.second); } }
     ];

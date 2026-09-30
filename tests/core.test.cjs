@@ -2,7 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../dist/core.js');
-const patterned = () => Array.from({ length: 64 }, (_, i) => (Math.floor(i / 8) * 2 + i % 8) % 6);
+const patterned = () => Array.from({ length: 64 }, (_, i) => (Math.floor(i / 8) * 2 + i % 8) % core.KINDS);
 const sorted = set => [...set].sort((a, b) => a - b);
 function seeded(seed) { return () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }; }
 
@@ -39,7 +39,7 @@ test('generated boards have 64 valid gems, no ready matches and at least one mov
   for (let seed = 1; seed <= 150; seed++) {
     const board = core.createBoard(seeded(seed));
     assert.equal(board.length, 64);
-    assert.ok(board.every(k => Number.isInteger(k) && k >= 0 && k < 6));
+    assert.ok(board.every(k => Number.isInteger(k) && k >= 0 && k < core.KINDS));
     assert.equal(core.findMatches(board).size, 0);
     assert.ok(core.findMoves(board).length > 0);
   }
@@ -70,7 +70,7 @@ test('refilled gems trigger the next cascade, and all cascades settle', () => {
   const random = seeded(42); let passes = 1, points = 30;
   while (matches.size && passes < 100) {
     points += matches.size * 10;
-    board = core.collapse(board, matches, () => Math.floor(random() * 6)).board;
+    board = core.collapse(board, matches, () => Math.floor(random() * core.KINDS)).board;
     matches = core.findMatches(board); passes++;
   }
   assert.ok(passes >= 2 && passes < 100);
