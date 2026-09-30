@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#100d21">
+  <meta name="description" content="Три в ряд: собирайте самоцветы, запускайте каскады и набирайте очки.">
+  <title>Самоцветики — Три в ряд</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='19' fill='%23100d21'/%3E%3Cpath d='M32 6 55 24 48 48 32 59 16 48 9 24Z' fill='%23a86fe4' stroke='%23f6d89b' stroke-width='2'/%3E%3Cpath d='m32 9 12 17-12 27-12-27Z' fill='%23f1c8ff' opacity='.7'/%3E%3Cpath d='m32 9 6 17H20Z' fill='%23fff2ff' opacity='.9'/%3E%3C/svg%3E">
+  <link rel="preload" as="image" href="assets/gems.png" fetchpriority="high">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="core.js"></script>
+  <script defer src="game.js"></script>
+</head>
+<body>
+  <main class="game-shell">
+    <div id="screen-container" class="screen-container">
+      <section id="start-screen" class="screen start-screen" aria-labelledby="start-title">
+        <div class="start-card">
+          <span class="eyebrow">ПУТЕШЕСТВИЕ ПО ЗВЁЗДНЫМ МИРАМ</span>
+          <h1 id="start-title">Самоцветики<span class="title-spark" aria-hidden="true">✧</span></h1>
+          <p class="start-copy">Собирайте сияющие камни, запускайте каскады и открывайте новые миры.</p>
+          <div class="hero-scene" aria-hidden="true">
+            <span class="hero-orbit orbit-one"></span><span class="hero-orbit orbit-two"></span>
+            <span class="hero-star star-one">✦</span><span class="hero-star star-two">✧</span><span class="hero-star star-three">·</span>
+            <span class="hero-gem hero-gem-back" style="background-position:0% 0"></span>
+            <span class="hero-gem hero-gem-main" style="background-position:80% 0"></span>
+            <span class="hero-gem hero-gem-front" style="background-position:40% 0"></span>
+          </div>
+          <button id="play-game" class="play-game" type="button"><span>Играть</span><span class="play-arrow" aria-hidden="true">→</span></button>
+          <p id="best-start" class="best-start">Лучший результат: 0</p>
+          <p class="start-hint"><span aria-hidden="true">✦</span> 6 этапов · музыка · каскады</p>
+        </div>
+      </section>
+      <section id="game-screen" class="screen game-screen" aria-label="Игра «Три в ряд»" hidden inert aria-hidden="true">
+        <header class="game-heading">
+          <div class="title-group"><span class="eyebrow">ТРИ В РЯД</span><h1>Самоцветики<span class="title-spark" aria-hidden="true">✧</span></h1></div>
+          <span class="board-label">8 × 8</span>
+        </header>
+        <section class="game" aria-label="Игра «Три в ряд»">
+          <div class="toolbar">
+            <div class="score-panel">
+              <span class="score-gem" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="m32 5 23 18-7 24-16 12L16 47 9 23 32 5Z" fill="url(#score-crystal)" stroke="#f8d999" stroke-width="1.5"/><path d="m32 8 12 18-12 27-12-27Z" fill="#f2caff" opacity=".7"/><path d="m32 8 6 18H20Z" fill="white" opacity=".78"/><defs><linearGradient id="score-crystal" x1="15" y1="8" x2="49" y2="57" gradientUnits="userSpaceOnUse"><stop stop-color="#ffb5ea"/><stop offset=".52" stop-color="#bc79ee"/><stop offset="1" stop-color="#6346bd"/></linearGradient></defs></svg></span>
+              <span class="score-copy"><span class="score-label">ВАШ СЧЁТ</span><strong id="score">0</strong></span>
+            </div>
+            <button id="sound-toggle" class="sound-toggle" type="button" aria-label="Выключить звук" aria-pressed="true" title="Выключить звук">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path class="sound-waves" d="M16 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11"/></svg>
+              <span class="sr-only">Выключить звук</span>
+            </button>
+            <button id="new-game" class="new-game" type="button" aria-label="Начать новую игру" title="Новая игра"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 8M4 4v6h6"/></svg><span class="new-game-label">Новая игра</span></button>
+          </div>
+          <div class="level-progress" aria-label="Прогресс этапа">
+            <div class="level-head"><span id="stage-label" class="stage-label">ЭТАП 1 · ЛУННЫЙ ГРОТ</span><span id="stage-goal" class="stage-goal">Цель: 300</span></div>
+            <div id="stage-track" class="stage-track" role="progressbar" aria-label="Прогресс к следующему этапу" aria-valuemin="0" aria-valuemax="300" aria-valuenow="0"><span id="stage-fill" class="stage-fill"></span></div>
+          </div>
+          <div id="board-frame" class="board-frame">
+            <div id="board" class="board" role="group" aria-label="Поле 8 на 8. Выберите самоцвет, затем соседний. Стрелки перемещают фокус; Enter выбирает камень.">
+              <div id="cells" class="cells" aria-hidden="true"></div>
+              <div id="tiles" class="tiles"></div>
+              <canvas id="sparkles" class="sparkles" aria-hidden="true"></canvas>
+            </div>
+          </div>
+          <div class="game-feedback"><span id="status" role="status" aria-live="polite">Выберите два соседних самоцвета</span><span id="cheer" class="cheer" aria-hidden="true"></span><span id="cascade" class="cascade" aria-hidden="true"></span></div>
+        </section>
+      <footer class="instructions"><span class="instruction-icon" aria-hidden="true">✦</span><p>Собирайте <b>3 и более</b> в ряд.<br class="mobile-break"> Каждый самоцвет — <b>10 очков</b>.</p></footer>
+      </section>
+      <section id="end-screen" class="screen end-screen" aria-labelledby="end-title" hidden inert aria-hidden="true">
+        <div class="end-card">
+          <div class="end-emblem" aria-hidden="true"><span>✦</span><svg viewBox="0 0 64 64"><defs><linearGradient id="end-crystal" x1="12" y1="4" x2="52" y2="60"><stop stop-color="#ffe5a5"/><stop offset=".48" stop-color="#c987f1"/><stop offset="1" stop-color="#6a4abb"/></linearGradient></defs><path d="M32 4 52 20 52 44 32 60 12 44 12 20Z" fill="url(#end-crystal)" stroke="#fff0c7" stroke-width="2"/><path d="M32 7 43 24 32 55 20 24Z" fill="#fff" opacity=".32"/></svg></div>
+          <span class="eyebrow">ПУТЕШЕСТВИЕ ЗАВЕРШЕНО</span>
+          <h1 id="end-title">Звёздный рубеж покорён!</h1>
+          <p class="end-copy">Все миры самоцветов открыты. Как красиво сложилась ваша история.</p>
+          <div class="result-panel"><span>ВАШ РЕЗУЛЬТАТ</span><strong id="final-score">0</strong></div>
+          <p id="record-note" class="record-note">Лучший результат: 0</p>
+          <div class="end-actions"><button id="play-again" class="play-game" type="button"><span>Играть снова</span><span class="play-arrow" aria-hidden="true">→</span></button><button id="go-home" class="home-button" type="button">На главную</button></div>
+        </div>
+      </section>
+    </div>
+    <noscript>Для игры включите JavaScript в браузере.</noscript>
+  </main>
+</body>
+</html>
